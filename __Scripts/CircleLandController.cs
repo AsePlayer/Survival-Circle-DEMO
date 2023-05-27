@@ -22,11 +22,12 @@ public class CircleLandController : LandController
         // Find the radius of the circular boundary
         movementRadiusX = boundaryCollider.bounds.extents.x;
         movementRadiusY = boundaryCollider.bounds.extents.y;
+
         // Get the center position
         centerPosition = boundaryCollider.bounds.center;
 
-        // Rotate the land to make it look like it is spinning
-        transform.Rotate(0, 0, -45 * Time.deltaTime);
+        // PingPong();
+        // Squish();
     }
 
     public override Vector2 TryMovePosition(Vector2 newPos) 
@@ -57,5 +58,11 @@ public class CircleLandController : LandController
     {
         // Move left and right by 5 units every 2 seconds
         transform.position = new Vector2(Mathf.PingPong(Time.time * 2.5f, 10) - 5, transform.position.y);
+    }
+
+    private void Squish()
+    {
+        // Squish the land horizontally with time slowly
+        transform.localScale = new Vector3(Mathf.PingPong(Time.time / 2, 1.5f) + 2.5f, transform.localScale.y, transform.localScale.z);
     }
 }
