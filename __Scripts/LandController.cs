@@ -10,4 +10,9 @@ public class LandController : MonoBehaviour
         print("LandController.TryMovePosition");
         return newPos;
     }
+
+    public virtual Vector2 GetCenterPosition() {
+        print("LandController.GetCenterPosition");
+        return Vector2.zero;
+    }
 }

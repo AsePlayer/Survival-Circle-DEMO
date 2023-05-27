@@ -24,6 +24,9 @@ public class CircleLandController : LandController
         movementRadiusY = boundaryCollider.bounds.extents.y;
         // Get the center position
         centerPosition = boundaryCollider.bounds.center;
+
+        // Rotate the land to make it look like it is spinning
+        transform.Rotate(0, 0, -45 * Time.deltaTime);
     }
 
     public override Vector2 TryMovePosition(Vector2 newPos) 
@@ -43,5 +46,16 @@ public class CircleLandController : LandController
 
         // Update player position
         return newPos;
+    }
+
+    public override Vector2 GetCenterPosition() 
+    {
+        return centerPosition;
+    }
+
+    private void PingPong()
+    {
+        // Move left and right by 5 units every 2 seconds
+        transform.position = new Vector2(Mathf.PingPong(Time.time * 2.5f, 10) - 5, transform.position.y);
     }
 }

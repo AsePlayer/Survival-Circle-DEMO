@@ -30,11 +30,18 @@ public class PlayerController : MonoBehaviour
         rb.velocity = movement * speed;
         // Normalize the velocity
         rb.velocity = Vector2.ClampMagnitude(rb.velocity, speed);
-        
-        // Player's new desired position
-        Vector2 newPos = rb.position;
+
+        // Smoothly rotate player to face direction of movement based on velocity in 2D
+        if (rb.velocity.magnitude > 0)
+        {
+            float targetAngle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.AngleAxis(targetAngle - 90, Vector3.forward);
+            float rotationSpeed = 360f; // Adjust this value to control the rotation speed
+            
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        }
 
         // Update player position
-        transform.position = land.TryMovePosition(newPos);
+        transform.position = land.TryMovePosition(rb.position);
     }
 }
