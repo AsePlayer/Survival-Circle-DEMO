@@ -51,6 +51,7 @@ public class EnemyMovement : MonoBehaviour
 
     }
 
+    // Check if the player is alive, if not, slow the enemy down
     private void CheckIfGameOver() 
     {
         if(gameController.IsPlayerAlive() == false) 
@@ -64,7 +65,8 @@ public class EnemyMovement : MonoBehaviour
             }
         }
     }
-
+    
+    // Check if the enemy has entered the view of the camera (and left the scene)
     private void CheckEnemyInView()
     {
         // Raycast from the camera to the enemy's position
@@ -85,17 +87,29 @@ public class EnemyMovement : MonoBehaviour
             if (enteredScene)
             {
                 enteredScene = false;
+
+                // Add score
+                AddScore();
+                
                 // Wait for 1 second before destroying the enemy
                 Invoke("DestroyEnemy", 1f);
-                    
-                // TODO: Add score
             }
         }
     }
 
+    // Destroy the enemy
     private void DestroyEnemy()
     {
         Destroy(gameObject);
+    }
+
+    // Add score to the UI
+    private void AddScore() 
+    {
+        if(player.IsAlive())
+        {
+            gameController.ui.IncreaseScore(2);
+        }
     }
     
 }

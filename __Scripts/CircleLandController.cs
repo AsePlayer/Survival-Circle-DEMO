@@ -25,11 +25,9 @@ public class CircleLandController : LandController
 
         // Get the center position
         centerPosition = boundaryCollider.bounds.center;
-
-        // PingPong();
-        // Squish();
     }
 
+    // Check if the player can move within the land
     public override Vector2 TryMovePosition(Vector2 newPos) 
     {
         // Check if new position is inside the circle
@@ -54,12 +52,14 @@ public class CircleLandController : LandController
         return centerPosition;
     }
 
+    // Move land left and right
     private void PingPong()
     {
         // Move left and right by 5 units every 2 seconds
         transform.position = new Vector2(Mathf.PingPong(Time.time * 2.5f, 10) - 5, transform.position.y);
     }
 
+    // Squish land horizontally
     private void Squish()
     {
         // Squish the land horizontally with time slowly

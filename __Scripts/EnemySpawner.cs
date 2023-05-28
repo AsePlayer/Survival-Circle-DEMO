@@ -21,7 +21,7 @@ public class EnemySpawner : MonoBehaviour
     {
         // Check if the player is alive
         if (gameController.IsPlayerAlive() == false) return;
-        
+
         spawnTimer -= Time.deltaTime;
 
         if (spawnTimer <= 0f)
@@ -30,7 +30,8 @@ public class EnemySpawner : MonoBehaviour
             spawnTimer = spawnInterval;
         }
     }
-
+    
+    // Spawn an enemy
     private void SpawnEnemy()
     {
         // Calculate a random position outside the scene bounds
@@ -40,6 +41,7 @@ public class EnemySpawner : MonoBehaviour
         GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
     }
 
+    // Calculate a random position outside the scene bounds
     private Vector3 GetRandomSpawnPosition()
     {
         float cameraHeight = mainCamera.orthographicSize;

@@ -6,12 +6,13 @@ public class PlayerController : MonoBehaviour
 {
     // Player Information
     private Rigidbody2D rb;
+    private SpriteRenderer spriteRenderer;
     private int speed = 5;
     private bool canMove = true;
     private bool isAlive = true;
 
-    LandController land;
-    private SpriteRenderer spriteRenderer;
+    private GameController gameController;
+    private LandController land;
 
     private void Start()
     {
@@ -21,6 +22,9 @@ public class PlayerController : MonoBehaviour
         // Get the land controller
         land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        // Get the game controller
+        gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
     }
 
     void Update()
@@ -56,57 +60,58 @@ public class PlayerController : MonoBehaviour
         if(other.gameObject.tag == "Enemy") {
             canMove = false; // Disable player movement
             isAlive = false; // Set player to dead
-            rb.velocity = Vector2.zero; // Stop player movement
+
+            Destroy(rb); // Destroy player rigidbody
+            Destroy(other.gameObject.GetComponent<Rigidbody2D>());  // Destroy other rigidbody
 
             // Shake player violently for a few seconds and then die
             StartCoroutine(ShakeAndDestroyCoroutine());
+            gameController.ui.ShowRestartButton();
         }
     }
 
-    // courotine to shake player violently for a few seconds
-private IEnumerator ShakeAndDestroyCoroutine()
-{
-    // Get color of material emission map (for later use)
-    Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
-        
-    // Disable player collision
-    GetComponent<Collider2D>().enabled = false;
-    float shakeDuration = 1f;
-    float shakeMagnitude = 0.2f;
-    float destroyDelay = 1.5f;
-    Vector3 initialPosition = transform.position;
-
-    float elapsedTime = 0f;
-    Vector3 originalPosition = initialPosition;
-
-    while (elapsedTime < shakeDuration)
+    // Shake player violently for a few seconds and then die
+    private IEnumerator ShakeAndDestroyCoroutine()
     {
-        // Calculate the percent complete of the shake
-        float percentComplete = elapsedTime / shakeDuration;
-        float damper = 1f - Mathf.Clamp(4f * percentComplete - 3f, 0f, 1f);
+        // Get color of material emission map (for later use)
+        Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
+            
+        // Disable player collision
+        GetComponent<Collider2D>().enabled = false;
+        float shakeDuration = 1f;
+        float shakeMagnitude = 0.2f;
+        float destroyDelay = 1.5f;
+        Vector3 initialPosition = transform.position;
 
-        // Generate a random offset for the shake
-        float x = Random.Range(-1f, 1f);
-        float y = Random.Range(-1f, 1f);
-        float z = 0;
-        Vector3 shakeOffset = new Vector3(x, y, z) * shakeMagnitude * damper;
+        float elapsedTime = 0f;
+        Vector3 originalPosition = initialPosition;
 
-        // Use Lerp to smoothly interpolate between original position and shaken position
-        transform.position = Vector3.Lerp(originalPosition, originalPosition + shakeOffset, percentComplete);
+        while (elapsedTime < shakeDuration)
+        {
+            // Calculate the percent complete of the shake
+            float percentComplete = elapsedTime / shakeDuration;
+            float damper = 1f - Mathf.Clamp(4f * percentComplete - 3f, 0f, 1f);
 
-        // Turn material emission map to grey over time
-        spriteRenderer.material.SetColor("_EmissionColor", Color.Lerp(emissionColor, Color.black, percentComplete));
+            // Generate a random offset for the shake
+            float x = Random.Range(-1f, 1f);
+            float y = Random.Range(-1f, 1f);
+            float z = 0;
+            Vector3 shakeOffset = new Vector3(x, y, z) * shakeMagnitude * damper;
 
-        elapsedTime += Time.deltaTime;
+            // Use Lerp to smoothly interpolate between original position and shaken position
+            transform.position = Vector3.Lerp(originalPosition, originalPosition + shakeOffset, percentComplete);
 
-        yield return null;
+            // Turn material emission map to grey over time
+            spriteRenderer.material.SetColor("_EmissionColor", Color.Lerp(emissionColor, Color.black, percentComplete));
+
+            elapsedTime += Time.deltaTime;
+
+            yield return null;
+        }
+        transform.position = originalPosition;
+
+        yield return new WaitForSeconds(destroyDelay);
     }
-
-    transform.position = originalPosition;
-    yield return new WaitForSeconds(destroyDelay);
-}
-
-
 
     // Check if player is alive
     public bool IsAlive() {
