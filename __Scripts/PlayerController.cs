@@ -25,6 +25,10 @@ public class PlayerController : MonoBehaviour
 
         // Get the game controller
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+
+        // Set trail renderer color to emission color
+        Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
+        GetComponentInChildren<TrailRenderer>().startColor = emissionColor;
     }
 
     void Update()
@@ -75,6 +79,10 @@ public class PlayerController : MonoBehaviour
     {
         // Get color of material emission map (for later use)
         Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
+
+        // Put trail in front of player (looks better)
+        Transform trail = transform.Find("Trail");
+        trail.position = new Vector3(trail.position.x, trail.position.y, -1);
             
         // Disable player collision
         GetComponent<Collider2D>().enabled = false;

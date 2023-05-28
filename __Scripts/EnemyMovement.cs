@@ -13,6 +13,7 @@ public class EnemyMovement : MonoBehaviour
     private PlayerController player;
 
     private GameController gameController;
+    private SpriteRenderer spriteRenderer;
 
     private bool enteredScene = false;
 
@@ -22,6 +23,8 @@ public class EnemyMovement : MonoBehaviour
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
         // Get the land controller
         land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
+        // Get the sprite renderer
+        spriteRenderer = GetComponent<SpriteRenderer>();
         // Try to find the player controller
         player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
 
@@ -34,6 +37,12 @@ public class EnemyMovement : MonoBehaviour
         // Ensure movementSpeed is constant
         movementDirection.z = 0f;
         movementDirection = movementDirection.normalized;
+
+        // Set trail renderer color to emission color
+        Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
+        GetComponentInChildren<TrailRenderer>().startColor = emissionColor;
+
+
     }
 
     private void Update()
@@ -65,7 +74,7 @@ public class EnemyMovement : MonoBehaviour
             }
         }
     }
-    
+
     // Check if the enemy has entered the view of the camera (and left the scene)
     private void CheckEnemyInView()
     {
