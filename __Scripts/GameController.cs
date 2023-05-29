@@ -4,16 +4,23 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-    public UIController ui;
-    PlayerController player;
-    // main camera
     Camera mainCamera;
+    PlayerController player;
+    public GameObject background;
+    public UIController ui;
     
+    // ════════════════════════════
+    //      Start and Update
+    // ════════════════════════════
+
     // Start is called before the first frame update
     void Start()
     {
         // Cache Player
         player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
+
+        // Cache background
+        background = GameObject.FindGameObjectWithTag("Background");
 
         // Cache UI
         ui = GetComponent<UIController>();
@@ -33,7 +40,8 @@ public class GameController : MonoBehaviour
 
         if(player.IsAlive() == false) 
         {
-            ui.ShowRestartButton();
+            // wait a few seconds before showing the restart button
+            Invoke("ShowRestartButton", 1.75f);
         }
 
         // Press R to restart the game
@@ -48,7 +56,20 @@ public class GameController : MonoBehaviour
             // Disable player collision
             player.GetComponent<Collider2D>().enabled = !player.GetComponent<Collider2D>().enabled;
         }
+
+        // Exit the game with ESC
+        if(Input.GetKeyDown(KeyCode.Escape)) 
+        {
+            Application.Quit();
+        }
+
+        // Rotate the background smoothly
+        background.transform.Rotate(0, 0, 0.005f);
     }
+
+    // ════════════════════════════
+    //      Helper Functions
+    // ════════════════════════════
 
     public bool IsPlayerAlive() {
         return player.IsAlive();
@@ -57,5 +78,8 @@ public class GameController : MonoBehaviour
     public Camera GetMainCamera() {
         return mainCamera;
     }
-    
+
+    private void ShowRestartButton() {
+        ui.ShowRestartButton();
+    }
 }

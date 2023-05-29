@@ -17,17 +17,46 @@ public class EnemyMovement : MonoBehaviour
 
     private bool enteredScene = false;
 
+    // ════════════════════════════
+    //      Start and Update
+    // ════════════════════════════
     private void Start()
     {
         // Get the game controller
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
+
         // Get the land controller
         land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
+
         // Get the sprite renderer
         spriteRenderer = GetComponent<SpriteRenderer>();
+
         // Try to find the player controller
         player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
 
+        // Get the target position
+        GetTargetPosition();
+    }
+
+    private void Update()
+    {
+        // Check if this enemy has entered the view of the camera
+        CheckEnemyInView();
+
+        // Move enemy towards the target position
+        MoveTowardsTarget();
+
+        // Check if the player is alive. If not, slow the enemy down
+        CheckIfGameOver();
+    }
+
+    // ════════════════════════════
+    //      Movement Methods
+    // ════════════════════════════
+
+    // Get the target position for the enemy to move towards
+    private void GetTargetPosition()
+    {
         // Set the target position to the middle of the land
         targetPosition = land.GetCenterPosition(); 
         // Set initial movement direction
@@ -37,27 +66,16 @@ public class EnemyMovement : MonoBehaviour
         // Ensure movementSpeed is constant
         movementDirection.z = 0f;
         movementDirection = movementDirection.normalized;
-
-        // Set trail renderer color to emission color
-        Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
-        GetComponentInChildren<TrailRenderer>().startColor = emissionColor;
-
-
     }
 
-    private void Update()
+    // Move enemy towards the target position
+    private void MoveTowardsTarget()
     {
         // Move enemy towards the movementDirection, with some randomness.
         transform.position += movementDirection * movementSpeed * Time.deltaTime;
 
         // Rotate enemy to face the movementDirection
         transform.rotation = Quaternion.LookRotation(Vector3.forward, movementDirection);
-
-        CheckIfGameOver();
-
-        // Check if this enemy has entered the view of the camera
-        CheckEnemyInView();
-
     }
 
     // Check if the player is alive, if not, slow the enemy down
@@ -75,6 +93,10 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
+    // ════════════════════════════
+    //        Death Methods
+    // ════════════════════════════
+
     // Check if the enemy has entered the view of the camera (and left the scene)
     private void CheckEnemyInView()
     {
@@ -84,10 +106,9 @@ public class EnemyMovement : MonoBehaviour
         if (viewportPoint.x > 0 && viewportPoint.x < 1 && viewportPoint.y > 0 && viewportPoint.y < 1 && viewportPoint.z > 0)
         {
             // Enemy is in view
-            if (!enteredScene)
+            if (!enteredScene) 
             {
                 enteredScene = true;
-                Debug.Log("Enemy has entered the view");
             }
         }
         else
