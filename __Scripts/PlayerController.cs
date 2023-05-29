@@ -4,60 +4,115 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    // Player Information
+    // ════════════════════════════
+    //      Player Information
+    // ════════════════════════════
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
+    private TrailController trailController;
+    private Color emissionColor;
     private int speed = 5;
     private bool canMove = true;
     private bool isAlive = true;
 
+    // ════════════════════════════
+    //      Game Information
+    // ════════════════════════════
     private GameController gameController;
     private LandController land;
+    private Collider2D boundary;
 
+    // ════════════════════════════
+    //      Start and Update
+    // ════════════════════════════
     private void Start()
     {
         // Get the Player rigidbody
         rb = GetComponent<Rigidbody2D>();
 
-        // Get the land controller
-        land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
+        // Get the sprite renderer
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        // Get the trail controller
+        trailController = GetComponentInChildren<TrailController>();
+
+        // Get the land controller
+        land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
+        boundary = land.GetComponent<Collider2D>();
+        
         // Get the game controller
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-
-        // Set trail renderer color to emission color
-        Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
-        GetComponentInChildren<TrailRenderer>().startColor = emissionColor;
     }
 
     void Update()
     {
-        if(!canMove) return;
-
-        // Get player input
-        Vector2 movement;
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
-
         // Move player
+        if (canMove)
+            MovePlayer(GetPlayerMovement());
+    }
+
+    // ════════════════════════════
+    //      Movement Methods
+    // ════════════════════════════
+    private Vector2 GetPlayerMovement() 
+    {
+        // Get the input axes
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+
+        // Calculate the movement vector
+        return new Vector2(horizontalInput, verticalInput);
+    }
+
+    private void MovePlayer(Vector2 movement) 
+    {
+        // Move player and normalize the velocity
         rb.velocity = movement * speed;
-        // Normalize the velocity
         rb.velocity = Vector2.ClampMagnitude(rb.velocity, speed);
 
+        // Rotate player
+        RotatePlayer();
+
+        // Keep player in land
+        KeepPlayerInLand();
+    }
+
+    private void KeepPlayerInLand() 
+    {
+        // Get the current position of the GameObject
+        Vector2 currentPosition = transform.position;
+
+        // Check if the current position is outside the land boundary
+        if (!boundary.OverlapPoint(currentPosition))
+        {
+            // Find the closest point inside the boundary
+            Vector2 closestPoint = boundary.ClosestPoint(currentPosition);
+
+            // Move the GameObject to the closest point
+            transform.position = closestPoint;
+        }
+    }
+
+    private void RotatePlayer()
+    {
         // Smoothly rotate player to face direction of movement based on velocity in 2D
         if (rb.velocity.magnitude > 0)
         {
+            // Calculate the target angle of rotation
             float targetAngle = Mathf.Atan2(rb.velocity.y, rb.velocity.x) * Mathf.Rad2Deg;
+
+            // Rotate the player by the target angle
             Quaternion targetRotation = Quaternion.AngleAxis(targetAngle - 90, Vector3.forward);
+
+            // Rotate player
             float rotationSpeed = 360f; // Adjust this value to control the rotation speed
-            
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
-
-        // Update player position
-        transform.position = land.TryMovePosition(rb.position);
     }
+
+    // ════════════════════════════
+    //        Death Methods
+    // ════════════════════════════
 
     // Check on collision for Enemy tag, if so, destroy player
     private void OnCollisionEnter2D(Collision2D other) {
@@ -70,7 +125,6 @@ public class PlayerController : MonoBehaviour
 
             // Shake player violently for a few seconds and then die
             StartCoroutine(ShakeAndDestroyCoroutine());
-            gameController.ui.ShowRestartButton();
         }
     }
 
@@ -81,8 +135,7 @@ public class PlayerController : MonoBehaviour
         Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
 
         // Put trail in front of player (looks better)
-        Transform trail = transform.Find("Trail");
-        trail.position = new Vector3(trail.position.x, trail.position.y, -1);
+        trailController.DieOut();
             
         // Disable player collision
         GetComponent<Collider2D>().enabled = false;
@@ -117,9 +170,13 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         transform.position = originalPosition;
-
+        
         yield return new WaitForSeconds(destroyDelay);
     }
+
+    // ════════════════════════════
+    //      Getter Methods
+    // ════════════════════════════
 
     // Check if player is alive
     public bool IsAlive() {

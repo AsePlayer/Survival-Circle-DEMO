@@ -10,11 +10,16 @@ public class CircleLandController : LandController
     float movementRadiusX;
     float movementRadiusY;
 
-
+    // ════════════════════════════
+    //      Start and Update
+    // ════════════════════════════
     void Start()
     {
         // Find Boundary Collider object with layer "Land"
         boundaryCollider = GetComponent<Collider2D>();
+
+        // Cache game controller
+        gameController = GameObject.FindGameObjectWithTag("GameController")?.GetComponent<GameController>();
     }
 
     void Update()
@@ -25,32 +30,15 @@ public class CircleLandController : LandController
 
         // Get the center position
         centerPosition = boundaryCollider.bounds.center;
+
+        // Rotate the land smoothly if the player is alive
+        if(gameController.IsPlayerAlive()) transform.Rotate(0, 0, -0.01f); 
+        
     }
 
-    // Check if the player can move within the land
-    public override Vector2 TryMovePosition(Vector2 newPos) 
-    {
-        // Check if new position is inside the circle
-        float x = (newPos.x - centerPosition.x) / (movementRadiusX);
-        float y = (newPos.y - centerPosition.y) / (movementRadiusY);
-
-        // Perform check by using the equation of an oval (x/a)^2 + (y/b)^2 = 1, where a and b are the semi-major and semi-minor axes of the oval
-        if (x * x + y * y > 1)
-        {
-            // If player is outside the oval, move them back to the edge of the oval
-            float angle = Mathf.Atan2(y, x);
-            // Calculate the angle of the point and move the player back to the edge of the oval by using the angle and the radius of the oval
-            newPos = new Vector2(centerPosition.x + (movementRadiusX) * Mathf.Cos(angle), centerPosition.y + (movementRadiusY) * Mathf.Sin(angle));
-        }
-
-        // Update player position
-        return newPos;
-    }
-
-    public override Vector2 GetCenterPosition() 
-    {
-        return centerPosition;
-    }
+    // ════════════════════════════
+    //      Change Land Shape
+    // ════════════════════════════
 
     // Move land left and right
     private void PingPong()
@@ -64,5 +52,13 @@ public class CircleLandController : LandController
     {
         // Squish the land horizontally with time slowly
         transform.localScale = new Vector3(Mathf.PingPong(Time.time / 2, 1.5f) + 2.5f, transform.localScale.y, transform.localScale.z);
+    }
+
+    // ════════════════════════════
+    //      Getters Functions
+    // ════════════════════════════
+    public override Vector2 GetCenterPosition() 
+    {
+        return centerPosition;
     }
 }
