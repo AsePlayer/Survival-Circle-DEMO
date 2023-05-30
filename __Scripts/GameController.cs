@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     PlayerController player;
     public GameObject background;
     public UIController ui;
+    public LandController land;
     
     // ════════════════════════════
     //      Start and Update
@@ -27,18 +28,29 @@ public class GameController : MonoBehaviour
 
         // Cache main camera
         mainCamera = Camera.main;
+
+        // Cache land
+        land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        // If player is null, try to find it
+        if(player == null) 
+            player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
+
+        // If land is null, try to find it
+        if(land == null) 
+            land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
+
         // Add a score every 5 seconds
-        if(Time.frameCount % (60 * 5) == 0 && player.IsAlive()) 
+        if(Time.frameCount % (60 * 5) == 0 && IsPlayerAlive()) 
         {
             ui.IncreasePassiveScore(1);
         }
 
-        if(player.IsAlive() == false) 
+        if(IsPlayerAlive() == false) 
         {
             // wait a few seconds before showing the restart button
             Invoke("ShowRestartButton", 1.75f);
@@ -72,7 +84,13 @@ public class GameController : MonoBehaviour
     // ════════════════════════════
 
     public bool IsPlayerAlive() {
+        // Null guard the player
+        if(player == null) return false;
         return player.IsAlive();
+    }
+
+    public PlayerController GetPlayer() {
+        return player;
     }
 
     public Camera GetMainCamera() {

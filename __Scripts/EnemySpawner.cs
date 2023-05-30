@@ -10,6 +10,9 @@ public class EnemySpawner : MonoBehaviour
     private Camera mainCamera;
     private GameController gameController;
 
+    // ════════════════════════════
+    //      Start and Update
+    // ════════════════════════════
     private void Start()
     {
         spawnTimer = spawnInterval;
@@ -30,6 +33,10 @@ public class EnemySpawner : MonoBehaviour
             spawnTimer = spawnInterval;
         }
     }
+
+    // ════════════════════════════
+    //       Spawn Methods
+    // ════════════════════════════
     
     // Spawn an enemy
     private void SpawnEnemy()

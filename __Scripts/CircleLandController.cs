@@ -61,4 +61,9 @@ public class CircleLandController : LandController
     {
         return centerPosition;
     }
+
+    public Collider2D GetBoundaryCollider() 
+    {
+        return boundaryCollider;
+    }
 }

@@ -64,6 +64,7 @@ public class PlayerController : MonoBehaviour
         return new Vector2(horizontalInput, verticalInput);
     }
 
+    // Move and rotate player within land boundary
     private void MovePlayer(Vector2 movement) 
     {
         // Move player and normalize the velocity
@@ -77,6 +78,7 @@ public class PlayerController : MonoBehaviour
         KeepPlayerInLand();
     }
 
+    // Keep player in land boundary
     private void KeepPlayerInLand() 
     {
         // Get the current position of the GameObject
@@ -93,6 +95,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    // Rotate player to face direction of movement
     private void RotatePlayer()
     {
         // Smoothly rotate player to face direction of movement based on velocity in 2D
@@ -181,5 +184,9 @@ public class PlayerController : MonoBehaviour
     // Check if player is alive
     public bool IsAlive() {
         return isAlive;
+    }
+
+    public void ChangeColor(Material color) {
+        spriteRenderer.material = color;
     }
 }

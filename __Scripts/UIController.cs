@@ -13,9 +13,16 @@ public class UIController : MonoBehaviour
 
     [SerializeField] TextMeshProUGUI restartText;
 
+    // ════════════════════════════
+    //      Start and Update
+    // ════════════════════════════
+    
     // Start is called before the first frame update
     void Start()
     {
+        // Null guard the scoreText
+        if (scoreText == null) return;
+
         scoreText.text = "0";
         textFontSize = scoreText.fontSize;
     }
@@ -27,12 +34,18 @@ public class UIController : MonoBehaviour
     }
 
     public void IncreaseScore(int score) {
+        // Null guard the scoreText
+        if (scoreText == null) return;
+
         this.score += score;
         StartCoroutine(ScaleText(score));
         scoreText.text = this.score.ToString();
     }
 
     public void IncreasePassiveScore(int score) {
+        // Null guard the scoreText
+        if (scoreText == null) return;
+
         this.score += score;
         scoreText.text = this.score.ToString();
     }
@@ -77,6 +90,8 @@ public class UIController : MonoBehaviour
     }
 
     public void ShowRestartButton() {
+        // Null guard the restartText
+        if (restartText == null) return;
         restartText.gameObject.SetActive(true);
     }
 
