@@ -75,7 +75,9 @@ public class PlayerInfo : MonoBehaviour
             // try catch
             try
             {
-                player.SetColor(playerMaterial);
+                // if player is not dead
+                if (player.IsAlive())
+                    player.SetColor(playerMaterial);
             }
             catch
             {
