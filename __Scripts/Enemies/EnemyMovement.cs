@@ -40,6 +40,10 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
+        // if player is null, find him
+        if(player == null) 
+            player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
+            
         // Check if this enemy has entered the view of the camera
         CheckEnemyInView();
 

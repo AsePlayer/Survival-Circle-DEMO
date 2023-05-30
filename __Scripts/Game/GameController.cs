@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -59,7 +60,13 @@ public class GameController : MonoBehaviour
         // Press R to restart the game
         if(Input.GetKeyDown(KeyCode.R)) 
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(0);
+            SceneManager.LoadScene("Game");
+        }
+
+        // Press E to go to Main Menu
+        if(Input.GetKeyDown(KeyCode.E)) 
+        {
+            SceneManager.LoadScene("MainMenu");
         }
 
         // Press G to get GODMODE

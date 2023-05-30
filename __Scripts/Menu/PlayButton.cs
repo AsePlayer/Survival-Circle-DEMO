@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StyleButton : MonoBehaviour
+public class PlayButton : MonoBehaviour
 {
 
     // Cache game controller
@@ -44,19 +44,18 @@ public class StyleButton : MonoBehaviour
         if (land == null)
             land = gameController.land;
 
-        // Check if mouse clicked
         CheckForMouseClick();
 
         if (IsOverlapComplete())
         {
             // Change MenuManager State
-            MenuManager.Instance.UpdateMenuState(MenuManager.MenuState.Style);
+            MenuManager.Instance.UpdateMenuState(MenuManager.MenuState.Game);
 
             // Perform actions when overlap is complete
-            DisplayColors();
-            PerformUIAdjustments();
-            MoveLandToLeft();
-            MoveMenuAndColorSelector();
+            // DisplayColors();
+            // PerformUIAdjustments();
+            // MoveLandToLeft();
+            // MoveMenuAndColorSelector();
 
             // IEnumerator to set isOverlapComplete to false after 1 second
             StartCoroutine(ResetOverlapComplete());
@@ -154,6 +153,7 @@ public class StyleButton : MonoBehaviour
         {
             isOverlapComplete = true;
             Debug.Log(gameObject.name);
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
         }
     }
 
@@ -175,7 +175,7 @@ public class StyleButton : MonoBehaviour
             // Check if the mouse is over this object
             if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
             {
-                isOverlapComplete = true;
+                UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
             }
         }
     }

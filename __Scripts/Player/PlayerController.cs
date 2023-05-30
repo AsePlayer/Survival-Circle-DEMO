@@ -25,9 +25,14 @@ public class PlayerController : MonoBehaviour
     // ════════════════════════════
     //      Start and Update
     // ════════════════════════════
+
+    void Awake()
+    {
+
+    }
+
     private void Start()
     {
-        // Get the Player rigidbody
         rb = GetComponent<Rigidbody2D>();
 
         // Get the sprite renderer
@@ -46,6 +51,13 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // Null guard the land
+        if(land == null) 
+        {
+            land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
+            boundary = land.GetComponent<Collider2D>();
+        }
+
         // Move player
         if (canMove)
             MovePlayer(GetPlayerMovement());
@@ -186,7 +198,16 @@ public class PlayerController : MonoBehaviour
         return isAlive;
     }
 
-    public void ChangeColor(Material color) {
+    public void SetColor(Material color) {
         spriteRenderer.material = color;
+        PlayerInfo.playerInfo.SetMaterial(color);
+    }
+
+    public Material GetColor() {
+        return spriteRenderer.material;
+    }
+
+    public SpriteRenderer GetSpriteRenderer() {
+        return spriteRenderer;
     }
 }

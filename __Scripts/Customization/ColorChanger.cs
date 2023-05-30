@@ -49,7 +49,8 @@ public class ColorChanger : MonoBehaviour
                     player = gameController.GetPlayer();
 
                 // Change the player color
-                player.ChangeColor(material);
+                player.SetColor(material);
+
             }
         }
 
