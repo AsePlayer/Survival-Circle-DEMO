@@ -16,4 +16,10 @@ public class Square : MonoBehaviour
     {
         
     }
+
+    private void OnMouseDown()
+    {
+        PlayerInfo.playerInfo.SetShape("Square");
+        Destroy(PlayerInfo.playerInfo.GetPlayer().gameObject);
+    }
 }

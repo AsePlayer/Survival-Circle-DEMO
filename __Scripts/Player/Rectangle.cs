@@ -7,8 +7,8 @@ public class Rectangle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // tell PlayerInfo this is the square
-        PlayerInfo.playerInfo.SetShape("Rectangle");
+        // tell PlayerInfo this is the rectangle
+        
     }
 
     // Update is called once per frame
@@ -16,4 +16,11 @@ public class Rectangle : MonoBehaviour
     {
         
     }
+
+    private void OnMouseDown()
+    {
+        PlayerInfo.playerInfo.SetShape("Rectangle");
+        Destroy(PlayerInfo.playerInfo.GetPlayer().gameObject);
+    }
+
 }

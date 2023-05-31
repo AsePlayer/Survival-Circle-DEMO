@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BackButton : MonoBehaviour
 {
@@ -28,8 +29,8 @@ public class BackButton : MonoBehaviour
     void Start()
     {
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-        customizeController = GameObject.FindGameObjectWithTag("CustomizeController").GetComponent<CustomizeController>();
-        player = gameController.GetPlayer();
+        customizeController = GameObject.FindGameObjectWithTag("CustomizeController")?.GetComponent<CustomizeController>();
+        if(player) player = gameController.GetPlayer();
 
         land = gameController.land;
     }
@@ -46,7 +47,20 @@ void Update()
     // Check if mouse clicked
     CheckForMouseClick();
 
-    if (IsOverlapComplete())
+    if(player && !player.IsAlive())
+    {
+        transform.parent.gameObject.GetComponent<TMPro.TextMeshProUGUI>().enabled = true;
+        GetComponent<Collider2D>().enabled = true;
+
+        if(IsOverlapComplete())
+        {
+            // load main menu scene
+            MenuManager.Instance.UpdateMenuState(MenuManager.MenuState.Main);
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
+
+    if (IsOverlapComplete() && player.IsAlive())
     {
         // Change MenuManager State
         MenuManager.Instance.UpdateMenuState(MenuManager.MenuState.Back);

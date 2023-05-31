@@ -18,6 +18,8 @@ public class CustomizeController : MonoBehaviour
 
     public StyleButton styleButton;
 
+    GameObject[] characterSelects;
+
     // ════════════════════════════
     //      Start and Update
     // ════════════════════════════
@@ -51,6 +53,31 @@ public class CustomizeController : MonoBehaviour
             // Disable parent until the player overlaps with the StyleButton
             
         }
+
+        // spawn the Player Info prefabs list
+        for(int i = 0; i < PlayerInfo.playerInfo.prefabs.Count; i++)
+        {
+            // Calculate the position of the colorSelectorPrefab
+            int row = i / 7; // Calculate the row index
+            int col = i % 7; // Calculate the column index
+
+            // Calculate the position based on row and col
+            float x = col - 1f;
+            float y = 3f - row;
+
+            // Spawn the colorSelectorPrefab
+            GameObject colorSelector = Instantiate(PlayerInfo.playerInfo.prefabs[i], new Vector2(x * 2, y), Quaternion.identity);
+            colorSelector.GetComponent<PlayerController>().enabled = false;
+            // change tag to "Default"
+            colorSelector.tag = "CharacterSelect";
+            
+            // Set the parent of the colorSelectorPrefab
+            colorSelector.transform.parent = colorSelectorParent.transform;
+
+        }
+
+        characterSelects = GameObject.FindGameObjectsWithTag("CharacterSelect");
+
         // Move to the right position
         colorSelectorParent.transform.position = new Vector2(13.5f, 0f);
         colorSelectorParent.SetActive(false);
@@ -60,7 +87,10 @@ public class CustomizeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        foreach(GameObject characterSelect in characterSelects)
+        {
+            characterSelect.transform.Rotate(0, 0, -0.1f);
+        }
     }
 
     // Get parent object of the colorSelectorPrefabs

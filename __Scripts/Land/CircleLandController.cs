@@ -32,7 +32,8 @@ public class CircleLandController : LandController
         centerPosition = boundaryCollider.bounds.center;
 
         // Rotate the land smoothly if the player is alive
-        if(gameController.IsPlayerAlive()) transform.Rotate(0, 0, -0.01f); 
+        if(gameController.IsPlayerAlive()) transform.Rotate(0, 0, -0.01f * (1 + gameController.difficultyRamp / 4)); 
+        else transform.Rotate(0, 0, -0.01f); 
         
     }
 

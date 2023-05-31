@@ -16,6 +16,11 @@ public class PlayerInfo : MonoBehaviour
     // list of prefabs
     public List<GameObject> prefabs;
 
+    public Vector2 playerTransformPosition;
+
+    // store rotation
+    public Quaternion playerTransformRotation;
+
     // Start is called before the first frame update
 
     public static PlayerInfo playerInfo;
@@ -54,13 +59,19 @@ public class PlayerInfo : MonoBehaviour
             if (shape == "Square")
             {
                 // instantiate Square
-                newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
+                if(MenuManager.Instance.menuState == MenuManager.MenuState.Game)
+                    newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
+                else
+                    newPlayer = Instantiate(prefabs[0], playerTransformPosition, playerTransformRotation);
                 player = newPlayer.GetComponent<PlayerController>();
             }
             else if (shape == "Rectangle")
             {
                 // instantiate Rectangle
-                newPlayer = Instantiate(prefabs[1], new Vector3(0, 0, 0), Quaternion.identity);
+                if(MenuManager.Instance.menuState == MenuManager.MenuState.Game)
+                    newPlayer = Instantiate(prefabs[1], new Vector3(0, 0, 0), Quaternion.identity);
+                else
+                    newPlayer = Instantiate(prefabs[1], playerTransformPosition, playerTransformRotation);
                 player = newPlayer.GetComponent<PlayerController>();
             }
             else 
@@ -70,6 +81,7 @@ public class PlayerInfo : MonoBehaviour
                 player = newPlayer.GetComponent<PlayerController>();
             }
         }
+
         if(player != null)
         {
             // try catch
@@ -95,4 +107,16 @@ public class PlayerInfo : MonoBehaviour
     {
         this.shape = shape;
     }
+
+    public void ChangeShape()
+    {
+        Destroy(player.gameObject);
+    }
+
+    public PlayerController GetPlayer()
+    {      
+        return player;
+        
+    }
+    
 }

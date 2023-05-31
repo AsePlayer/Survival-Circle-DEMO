@@ -153,6 +153,7 @@ public class PlayButton : MonoBehaviour
         {
             isOverlapComplete = true;
             Debug.Log(gameObject.name);
+            MenuManager.Instance.menuState = MenuManager.MenuState.Game;
             UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
         }
     }
@@ -171,10 +172,10 @@ public class PlayButton : MonoBehaviour
         {
             // Get the mouse position
             Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
             // Check if the mouse is over this object
             if (GetComponent<Collider2D>().OverlapPoint(mousePosition))
             {
+                MenuManager.Instance.menuState = MenuManager.MenuState.Game;
                 UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
             }
         }

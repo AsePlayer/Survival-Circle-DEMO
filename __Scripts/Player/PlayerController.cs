@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private TrailController trailController;
     private Color emissionColor;
-    private int speed = 5;
+    public float speed = 5f;
     private bool canMove = true;
     private bool isAlive = true;
 
@@ -209,5 +209,15 @@ public class PlayerController : MonoBehaviour
 
     public SpriteRenderer GetSpriteRenderer() {
         return spriteRenderer;
+    }
+
+    public void IncreaseSpeed(float speed) {
+        this.speed += speed;
+    }
+
+    // on destroyed, send postiion to PlayerInfo
+    private void OnDestroy() {
+        PlayerInfo.playerInfo.playerTransformPosition = transform.position;
+        PlayerInfo.playerInfo.playerTransformRotation = transform.rotation;
     }
 }

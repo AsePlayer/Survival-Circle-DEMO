@@ -10,12 +10,25 @@ public class GameController : MonoBehaviour
     public GameObject background;
     public UIController ui;
     public LandController land;
+
+    public int difficultyRamp;
     
     // ════════════════════════════
     //      Start and Update
     // ════════════════════════════
 
     // Start is called before the first frame update
+        public static GameController Instance;
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
     void Start()
     {
         // Cache Player
@@ -48,7 +61,13 @@ public class GameController : MonoBehaviour
         // Add a score every 5 seconds
         if(Time.frameCount % (60 * 5) == 0 && IsPlayerAlive()) 
         {
-            ui.IncreasePassiveScore(1);
+            // only increase speed if the state is in Game
+            if(MenuManager.Instance.menuState == MenuManager.MenuState.Game)
+            {
+                difficultyRamp++;
+                player.IncreaseSpeed(0.15f);
+                ui.IncreasePassiveScore(1);
+            }
         }
 
         if(IsPlayerAlive() == false) 
@@ -83,7 +102,10 @@ public class GameController : MonoBehaviour
         }
 
         // Rotate the background smoothly
-        background.transform.Rotate(0, 0, 0.005f);
+        if(IsPlayerAlive() )
+            background.transform.Rotate(0, 0, 0.005f + difficultyRamp * 0.0001f);
+        else
+            background.transform.Rotate(0, 0, 0.005f);
     }
 
     // ════════════════════════════
