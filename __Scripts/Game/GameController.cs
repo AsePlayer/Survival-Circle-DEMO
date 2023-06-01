@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
 
     public int difficultyRamp;
     
+    
     // ════════════════════════════
     //      Start and Update
     // ════════════════════════════
@@ -45,6 +46,8 @@ public class GameController : MonoBehaviour
 
         // Cache land
         land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
+        
+        StartCoroutine(IncreaseDifficulty());
     }
 
     // Update is called once per frame
@@ -54,21 +57,14 @@ public class GameController : MonoBehaviour
         if(player == null) 
             player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
 
+        if(player == null)
+        {
+            PlayerInfo.playerInfo.SpawnPlayer("Square");
+        }
+
         // If land is null, try to find it
         if(land == null) 
             land = GameObject.FindGameObjectWithTag("Land").GetComponent<LandController>();
-
-        // Add a score every 5 seconds
-        if(Time.frameCount % (60 * 5) == 0 && IsPlayerAlive()) 
-        {
-            // only increase speed if the state is in Game
-            if(MenuManager.Instance.menuState == MenuManager.MenuState.Game)
-            {
-                difficultyRamp++;
-                player.IncreaseSpeed(0.15f);
-                ui.IncreasePassiveScore(1);
-            }
-        }
 
         if(IsPlayerAlive() == false) 
         {
@@ -128,5 +124,25 @@ public class GameController : MonoBehaviour
 
     private void ShowRestartButton() {
         ui.ShowRestartButton();
+    }
+
+    // Consistently increase difficulty
+    IEnumerator IncreaseDifficulty()
+    {
+        if(player == null)
+            yield return null;
+
+        while (player.IsAlive())
+        {
+            yield return new WaitForSeconds(5f);
+
+            // only increase speed if the state is in Game
+            if (MenuManager.Instance.menuState == MenuManager.MenuState.Game)
+            {
+                difficultyRamp++;
+                player.IncreaseSpeed(0.2f);
+                ui.IncreasePassiveScore(1);
+            }
+        }
     }
 }

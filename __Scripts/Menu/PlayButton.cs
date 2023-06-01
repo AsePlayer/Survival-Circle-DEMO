@@ -44,6 +44,7 @@ public class PlayButton : MonoBehaviour
         if (land == null)
             land = gameController.land;
 
+        // Check if mouse clicked (functionally the same as the overlap check)
         CheckForMouseClick();
 
         if (IsOverlapComplete())

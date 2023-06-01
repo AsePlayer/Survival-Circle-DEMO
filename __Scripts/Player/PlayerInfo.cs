@@ -11,7 +11,7 @@ public class PlayerInfo : MonoBehaviour
     private Material playerMaterial;
     public Material defaultMaterial;
 
-    private string shape;
+    public string shape;
 
     // list of prefabs
     public List<GameObject> prefabs;
@@ -54,31 +54,18 @@ public class PlayerInfo : MonoBehaviour
 
         if(player == null)
         {
-            GameObject newPlayer;
             // if this is a Square
             if (shape == "Square")
             {
-                // instantiate Square
-                if(MenuManager.Instance.menuState == MenuManager.MenuState.Game)
-                    newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
-                else
-                    newPlayer = Instantiate(prefabs[0], playerTransformPosition, playerTransformRotation);
-                player = newPlayer.GetComponent<PlayerController>();
+                SpawnPlayer(shape);
             }
             else if (shape == "Rectangle")
             {
-                // instantiate Rectangle
-                if(MenuManager.Instance.menuState == MenuManager.MenuState.Game)
-                    newPlayer = Instantiate(prefabs[1], new Vector3(0, 0, 0), Quaternion.identity);
-                else
-                    newPlayer = Instantiate(prefabs[1], playerTransformPosition, playerTransformRotation);
-                player = newPlayer.GetComponent<PlayerController>();
+                SpawnPlayer(shape);
             }
             else 
             {
-                // instantiate Square
-                newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
-                player = newPlayer.GetComponent<PlayerController>();
+                SpawnPlayer("Square");
             }
         }
 
@@ -117,6 +104,33 @@ public class PlayerInfo : MonoBehaviour
     {      
         return player;
         
+    }
+
+    public void SpawnPlayer(string shape)
+    {
+        if(player != null)
+            return;
+            
+        GameObject newPlayer;
+        // if this is a Square
+        if (shape == "Square")
+        {
+            // instantiate Square
+            newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
+            player = newPlayer.GetComponent<PlayerController>();
+        }
+        else if (shape == "Rectangle")
+        {
+            // instantiate Rectangle
+            newPlayer = Instantiate(prefabs[1], new Vector3(0, 0, 0), Quaternion.identity);
+            player = newPlayer.GetComponent<PlayerController>();
+        }
+        else
+        {
+            // instantiate Square
+            newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
+            player = newPlayer.GetComponent<PlayerController>();
+        }
     }
     
 }

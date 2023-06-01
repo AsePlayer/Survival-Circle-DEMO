@@ -44,7 +44,7 @@ public class StyleButton : MonoBehaviour
         if (land == null)
             land = gameController.land;
 
-        // Check if mouse clicked
+        // Check if mouse clicked (functionally the same as the overlap check)
         CheckForMouseClick();
 
         if (IsOverlapComplete())
@@ -93,12 +93,6 @@ public class StyleButton : MonoBehaviour
 
     void MoveMenuAndColorSelector()
     {
-        // Bounds bounds = land.GetComponent<Collider2D>().bounds;
-        // Vector3 bottomLeftPosition = new Vector3(bounds.min.x * 1f, bounds.min.y * 0.6f, 0f);
-
-        // // Move back button
-        // customizeController.menuCanvas.transform.GetChild(0).transform.position = Vector2.Lerp(customizeController.menuCanvas.transform.GetChild(0).transform.position, bottomLeftPosition, 0.1f);
-
         // Move color selector parent
         customizeController.GetColorSelectorParent().transform.position = Vector3.Lerp(customizeController.transform.position, land.transform.position + new Vector3(-7f, 0f, 0), 0.1f);
     }
