@@ -137,7 +137,7 @@ public class GameController : MonoBehaviour
             yield return new WaitForSeconds(5f);
 
             // only increase speed if the state is in Game
-            if (MenuManager.Instance.menuState == MenuManager.MenuState.Game)
+            if (ui.GetScore() > 0)
             {
                 difficultyRamp++;
                 player.IncreaseSpeed(0.2f);

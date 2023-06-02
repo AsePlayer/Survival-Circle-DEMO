@@ -61,6 +61,9 @@ public class PlayerController : MonoBehaviour
         // Move player
         if (canMove)
             MovePlayer(GetPlayerMovement());
+        
+        PlayerInfo.playerInfo.playerTransformPosition = transform.position;
+        PlayerInfo.playerInfo.playerTransformRotation = transform.rotation;
     }
 
     // ════════════════════════════
@@ -213,11 +216,5 @@ public class PlayerController : MonoBehaviour
 
     public void IncreaseSpeed(float speed) {
         this.speed += speed;
-    }
-
-    // on destroyed, send postiion to PlayerInfo
-    private void OnDestroy() {
-        PlayerInfo.playerInfo.playerTransformPosition = transform.position;
-        PlayerInfo.playerInfo.playerTransformRotation = transform.rotation;
     }
 }

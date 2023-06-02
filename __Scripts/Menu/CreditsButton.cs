@@ -1,15 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
-public class BackButton : MonoBehaviour
+public class CreditsButton : MonoBehaviour
 {
+
     // Cache game controller
     private GameController gameController;
-
-    // Cache CustomizeController
-    private CustomizeController customizeController;
 
     // Cache player from game controller
     private PlayerController player;
@@ -20,6 +17,12 @@ public class BackButton : MonoBehaviour
     public bool isOverlapComplete = false; // Variable to track if overlap check is already completed
     public bool stoppedOverlapping = true; // Variable to track if player has stopped overlapping
 
+    // Store tmpro made by me
+    public TMPro.TextMeshProUGUI creditsText;
+    public TMPro.TextMeshProUGUI creditsNameText;
+
+    // store initial position of credits text
+    private Vector3 initialPosition;
     
     // ════════════════════════════
     //      Start and Update
@@ -29,10 +32,12 @@ public class BackButton : MonoBehaviour
     void Start()
     {
         gameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameController>();
-        customizeController = GameObject.FindGameObjectWithTag("CustomizeController")?.GetComponent<CustomizeController>();
-        if(player) player = gameController.GetPlayer();
+
+        player = gameController.GetPlayer();
 
         land = gameController.land;
+
+        initialPosition = creditsNameText.transform.position;
     }
 
     // Update is called once per frame
@@ -47,43 +52,21 @@ public class BackButton : MonoBehaviour
         // Check if mouse clicked (functionally the same as the overlap check)
         CheckForMouseClick();
 
-        // If player is dead, the back button will go to the main menu
-        if(player && !player.IsAlive())
-        {
-            transform.parent.gameObject.GetComponent<TMPro.TextMeshProUGUI>().enabled = true;
-            GetComponent<Collider2D>().enabled = true;
-
-            if(IsOverlapComplete())
-            {
-                // load main menu scene
-                SceneManager.LoadScene("MainMenu");
-                // MenuManager.Instance.UpdateMenuState(MenuManager.MenuState.Main);
-            }
-        }
-
-        // If player is alive, the back button will go back
-        if (IsOverlapComplete() && player.IsAlive())
+        if (IsOverlapComplete())
         {
             // Change MenuManager State
-            MenuManager.Instance.UpdateMenuState(MenuManager.MenuState.Back);
+            MenuManager.Instance.UpdateMenuState(MenuManager.MenuState.Credits);
 
-            MoveLandToCenter();
-            MoveBackButton();
-            PerformReverseActions();
+            // Perform actions when overlap is complete
+            DisplayColors();
+            PerformUIAdjustments();
+            MoveLandToUp();
+            MoveMenuAndColorSelector();
 
             // IEnumerator to set isOverlapComplete to false after 1 second
             StartCoroutine(ResetOverlapComplete());
         }
 
-    }
-
-    public void MoveBackButton()
-    {
-            Bounds bounds = land.GetComponent<Collider2D>().bounds;
-            Vector3 bottomLeftPosition = new Vector3(bounds.min.x * 1f, bounds.min.y * 0.6f, 0f);
-
-            // Move back button
-            customizeController.menuCanvas.transform.GetChild(0).transform.position = Vector2.Lerp(customizeController.menuCanvas.transform.GetChild(0).transform.position, bottomLeftPosition, 0.1f);
     }
 
     bool IsOverlapComplete()
@@ -94,43 +77,42 @@ public class BackButton : MonoBehaviour
     void DisplayColors()
     {
         // Time to style
-        customizeController.GetColorSelectorParent().SetActive(true);
+        // customizeController.GetColorSelectorParent().SetActive(true);
+        creditsNameText.enabled = true;
+        creditsNameText.transform.position = Vector3.Lerp(land.transform.position, new Vector3(0f, land.GetCenterPosition().y - 55f, 15f), 0.1f);
+        creditsText.enabled = false;
+
+
     }
 
     void PerformUIAdjustments()
     {
-        // Hide menu
-        customizeController.menuCanvas.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().enabled = false;
+        // // Hide menu
+        // customizeController.menuCanvas.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().enabled = false;
 
-        // Show back button
-        // transform.root.transform.Find("BackButton").gameObject.SetActive(true);
-        customizeController.menuCanvas.transform.GetChild(0).gameObject.SetActive(true);
+        // // Show back button
+        // // transform.root.transform.Find("BackButton").gameObject.SetActive(true);
+        // customizeController.menuCanvas.transform.GetChild(0).gameObject.SetActive(true);
     }
 
-    void MoveLandToCenter()
+    void MoveLandToUp()
     {
-        // Translate land to the center of the world with lerp
-        land.transform.position = Vector3.Lerp(land.transform.position, new Vector3(0f, 0f, 15f), 0.1f);
+        // Translate land to the left with lerp
+        land.transform.position = Vector3.Lerp(land.transform.position, new Vector3(0f, 2f, 15f), 0.1f);
     }
 
     void MoveMenuAndColorSelector()
     {
-        Bounds bounds = land.GetComponent<Collider2D>().bounds;
-        Vector3 bottomLeftPosition = new Vector3(bounds.min.x * 1f, bounds.min.y * 0.6f, 0f);
-
-        // Move back button
-        customizeController.menuCanvas.transform.GetChild(0).transform.position = Vector2.Lerp(customizeController.menuCanvas.transform.GetChild(0).transform.position, bottomLeftPosition, 0.1f);
-
-        // Move color selector parent
-        customizeController.GetColorSelectorParent().transform.position = Vector3.Lerp(customizeController.transform.position, land.transform.position + new Vector3(-7f, 0f, 0), 0.1f);
+        // // Move color selector parent
+        // customizeController.GetColorSelectorParent().transform.position = Vector3.Lerp(customizeController.transform.position, land.transform.position + new Vector3(-7f, 0f, 0), 0.1f);
     }
 
     void PerformReverseActions()
     {
-        // Reverse actions when overlap is not complete
-        customizeController.GetColorSelectorParent().SetActive(false);
-        customizeController.menuCanvas.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().enabled = true;
-        //customizeController.menuCanvas.transform.GetChild(0).gameObject.SetActive(false);
+        // // Reverse actions when overlap is not complete
+        // customizeController.GetColorSelectorParent().SetActive(false);
+        // customizeController.menuCanvas.transform.GetChild(1).GetComponent<TMPro.TextMeshProUGUI>().enabled = true;
+        // customizeController.menuCanvas.transform.GetChild(0).gameObject.SetActive(false);
     }
 
 
@@ -178,15 +160,12 @@ public class BackButton : MonoBehaviour
             Debug.Log(gameObject.name);
         }
     }
+
     private IEnumerator ResetOverlapComplete()
     {
-        // disable the tmpro in parent
-        transform.parent.gameObject.GetComponent<TMPro.TextMeshProUGUI>().enabled = false;
-        // disable the collider
-        GetComponent<Collider2D>().enabled = false;
-        // wait for 1 second
         yield return new WaitForSeconds(1f);
         isOverlapComplete = false;
+
     }
 
     private void CheckForMouseClick()

@@ -95,4 +95,9 @@ public class UIController : MonoBehaviour
         restartText.gameObject.SetActive(true);
     }
 
+    public int GetScore()
+    {
+        return score;
+    }
+
 }

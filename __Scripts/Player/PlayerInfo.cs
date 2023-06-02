@@ -116,13 +116,13 @@ public class PlayerInfo : MonoBehaviour
         if (shape == "Square")
         {
             // instantiate Square
-            newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
+            newPlayer = Instantiate(prefabs[0], playerTransformPosition, playerTransformRotation);
             player = newPlayer.GetComponent<PlayerController>();
         }
         else if (shape == "Rectangle")
         {
             // instantiate Rectangle
-            newPlayer = Instantiate(prefabs[1], new Vector3(0, 0, 0), Quaternion.identity);
+            newPlayer = Instantiate(prefabs[1], playerTransformPosition, playerTransformRotation);
             player = newPlayer.GetComponent<PlayerController>();
         }
         else
@@ -131,6 +131,9 @@ public class PlayerInfo : MonoBehaviour
             newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
             player = newPlayer.GetComponent<PlayerController>();
         }
+
+        //enable newPlayer game object
+        newPlayer.SetActive(true);
     }
     
 }
