@@ -20,6 +20,12 @@ public class StyleButton : MonoBehaviour
     public bool isOverlapComplete = false; // Variable to track if overlap check is already completed
     public bool stoppedOverlapping = true; // Variable to track if player has stopped overlapping
 
+    public TMPro.TextMeshProUGUI text;
+
+    // cache original font spacing
+    private float originalFontSpacing;
+
+
     
     // ════════════════════════════
     //      Start and Update
@@ -33,6 +39,9 @@ public class StyleButton : MonoBehaviour
         player = gameController.GetPlayer();
 
         land = gameController.land;
+
+        // cache original font spacing
+        originalFontSpacing = text.characterSpacing;
     }
 
     // Update is called once per frame
@@ -110,6 +119,9 @@ public class StyleButton : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            if(text.characterSpacing < originalFontSpacing + 5f)
+                text.characterSpacing += 0.1f;
+
             stoppedOverlapping = false; // Set overlap check completion flag to false
 
             // Check if the player is null
@@ -129,6 +141,12 @@ public class StyleButton : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             stoppedOverlapping = true; // Set overlap check completion flag to true
+
+        while(text.characterSpacing > originalFontSpacing)
+            text.characterSpacing -= 0.1f;
+
+        if(text.characterSpacing < originalFontSpacing)
+            text.characterSpacing = originalFontSpacing;
         }
     }
 
@@ -172,5 +190,22 @@ public class StyleButton : MonoBehaviour
                 isOverlapComplete = true;
             }
         }
+    }
+
+    // check for mouse hover
+    private void OnMouseOver()
+    {
+        if(text.characterSpacing < originalFontSpacing + 5f)
+            text.characterSpacing += 0.05f;
+    }
+
+    // check for mouse exit
+    private void OnMouseExit()
+    {
+        while(text.characterSpacing > originalFontSpacing)
+            text.characterSpacing -= 0.1f;
+
+        if(text.characterSpacing < originalFontSpacing)
+            text.characterSpacing = originalFontSpacing;
     }
 }

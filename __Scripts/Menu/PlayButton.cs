@@ -20,6 +20,11 @@ public class PlayButton : MonoBehaviour
     public bool isOverlapComplete = false; // Variable to track if overlap check is already completed
     public bool stoppedOverlapping = true; // Variable to track if player has stopped overlapping
 
+    public TMPro.TextMeshProUGUI text;
+
+    // cache original font spacing
+    private float originalFontSpacing;
+
     
     // ════════════════════════════
     //      Start and Update
@@ -33,6 +38,9 @@ public class PlayButton : MonoBehaviour
         player = gameController.GetPlayer();
 
         land = gameController.land;
+
+        // cache original font spacing
+        originalFontSpacing = text.characterSpacing;
     }
 
     // Update is called once per frame
@@ -43,6 +51,8 @@ public class PlayButton : MonoBehaviour
 
         if (land == null)
             land = gameController.land;
+
+        
 
         // Check if mouse clicked (functionally the same as the overlap check)
         CheckForMouseClick();
@@ -61,7 +71,6 @@ public class PlayButton : MonoBehaviour
             // IEnumerator to set isOverlapComplete to false after 1 second
             StartCoroutine(ResetOverlapComplete());
         }
-
     }
 
     bool IsOverlapComplete()
@@ -116,6 +125,9 @@ public class PlayButton : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            if(text.characterSpacing < originalFontSpacing + 5f)
+                text.characterSpacing += 0.1f;
+
             stoppedOverlapping = false; // Set overlap check completion flag to false
 
             // Check if the player is null
@@ -135,7 +147,30 @@ public class PlayButton : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             stoppedOverlapping = true; // Set overlap check completion flag to true
+
+        while(text.characterSpacing > originalFontSpacing)
+            text.characterSpacing -= 0.1f;
+
+        if(text.characterSpacing < originalFontSpacing)
+            text.characterSpacing = originalFontSpacing;
         }
+    }
+
+    // check for mouse hover
+    private void OnMouseOver()
+    {
+        if(text.characterSpacing < originalFontSpacing + 5f)
+            text.characterSpacing += 0.05f;
+    }
+
+    // check for mouse exit
+    private void OnMouseExit()
+    {
+        while(text.characterSpacing > originalFontSpacing)
+            text.characterSpacing -= 0.1f;
+
+        if(text.characterSpacing < originalFontSpacing)
+            text.characterSpacing = originalFontSpacing;
     }
 
     // Coroutine to check the overlap duration
@@ -147,6 +182,7 @@ public class PlayButton : MonoBehaviour
         while (overlapDuration < 1f)
         {
             overlapDuration += Time.deltaTime;
+
             yield return null;
         }
 
@@ -163,7 +199,6 @@ public class PlayButton : MonoBehaviour
     {
         yield return new WaitForSeconds(1f);
         isOverlapComplete = false;
-
     }
 
     private void CheckForMouseClick()
@@ -181,5 +216,4 @@ public class PlayButton : MonoBehaviour
             }
         }
     }
-
 }

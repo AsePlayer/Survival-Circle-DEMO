@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerInfo : MonoBehaviour
 {
@@ -39,11 +40,10 @@ public class PlayerInfo : MonoBehaviour
     {
         player = GameObject.FindGameObjectWithTag("Player")?.GetComponent<PlayerController>();
         
-        // Initialize default material
-        playerMaterial = defaultMaterial;
-
         if(player != null)
             playerMaterial = player.GetColor();
+        else
+            playerMaterial = defaultMaterial;
     }
 
     // Update is called once per frame
@@ -75,7 +75,7 @@ public class PlayerInfo : MonoBehaviour
             try
             {
                 // if player is not dead
-                if (player.IsAlive())
+                if (player.IsAlive() && player.isDying == false)
                     player.SetColor(playerMaterial);
             }
             catch
@@ -131,7 +131,9 @@ public class PlayerInfo : MonoBehaviour
             newPlayer = Instantiate(prefabs[0], new Vector3(0, 0, 0), Quaternion.identity);
             player = newPlayer.GetComponent<PlayerController>();
         }
-
+        
+        SetMaterial(playerMaterial);
+        
         //enable newPlayer game object
         newPlayer.SetActive(true);
     }

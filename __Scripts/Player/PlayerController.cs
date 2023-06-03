@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public float speed = 5f;
     private bool canMove = true;
     private bool isAlive = true;
+    public bool isDying = false;
 
     // ════════════════════════════
     //      Game Information
@@ -22,21 +24,23 @@ public class PlayerController : MonoBehaviour
     private LandController land;
     private Collider2D boundary;
 
+    [SerializeField] private InputActionReference movementAction;
+
     // ════════════════════════════
     //      Start and Update
     // ════════════════════════════
 
     void Awake()
     {
-
+        // Get the sprite renderer
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
-        // Get the sprite renderer
-        spriteRenderer = GetComponent<SpriteRenderer>();
+
 
         // Get the trail controller
         trailController = GetComponentInChildren<TrailController>();
@@ -66,17 +70,24 @@ public class PlayerController : MonoBehaviour
         PlayerInfo.playerInfo.playerTransformRotation = transform.rotation;
     }
 
+    private void OnEnable() {
+        movementAction.action.Enable();
+    }
+
     // ════════════════════════════
     //      Movement Methods
     // ════════════════════════════
     private Vector2 GetPlayerMovement() 
     {
-        // Get the input axes
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        // // Get the input axes
+        // float horizontalInput = Input.GetAxis("Horizontal");
+        // float verticalInput = Input.GetAxis("Vertical");
+
+        // test for mobile
+        Vector2 moveDirection = movementAction.action.ReadValue<Vector2>();
 
         // Calculate the movement vector
-        return new Vector2(horizontalInput, verticalInput);
+        return moveDirection;
     }
 
     // Move and rotate player within land boundary
@@ -149,6 +160,9 @@ public class PlayerController : MonoBehaviour
     // Shake player violently for a few seconds and then die
     private IEnumerator ShakeAndDestroyCoroutine()
     {
+        // Set player to dying
+        isDying = true;
+        
         // Get color of material emission map (for later use)
         Color emissionColor = spriteRenderer.material.GetColor("_EmissionColor");
 

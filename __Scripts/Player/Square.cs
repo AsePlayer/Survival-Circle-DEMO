@@ -7,8 +7,7 @@ public class Square : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // tell PlayerInfo this is the square
-        PlayerInfo.playerInfo.SetShape("Square");
+
     }
 
     // Update is called once per frame
@@ -19,6 +18,8 @@ public class Square : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if(gameObject.tag != "CharacterSelect") return;
+        
         PlayerInfo.playerInfo.SetShape("Square");
         Destroy(PlayerInfo.playerInfo.GetPlayer().gameObject);
     }

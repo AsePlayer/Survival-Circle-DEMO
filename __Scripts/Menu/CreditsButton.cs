@@ -23,6 +23,11 @@ public class CreditsButton : MonoBehaviour
 
     // store initial position of credits text
     private Vector3 initialPosition;
+
+    public TMPro.TextMeshProUGUI text;
+
+    // cache original font spacing
+    private float originalFontSpacing;
     
     // ════════════════════════════
     //      Start and Update
@@ -38,6 +43,9 @@ public class CreditsButton : MonoBehaviour
         land = gameController.land;
 
         initialPosition = creditsNameText.transform.position;
+
+        // cache original font spacing
+        originalFontSpacing = text.characterSpacing;
     }
 
     // Update is called once per frame
@@ -120,6 +128,9 @@ public class CreditsButton : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            if(text.characterSpacing < originalFontSpacing + 5f)
+                text.characterSpacing += 0.1f;
+
             stoppedOverlapping = false; // Set overlap check completion flag to false
 
             // Check if the player is null
@@ -139,7 +150,30 @@ public class CreditsButton : MonoBehaviour
         if (other.gameObject.CompareTag("Player"))
         {
             stoppedOverlapping = true; // Set overlap check completion flag to true
+
+        while(text.characterSpacing > originalFontSpacing)
+            text.characterSpacing -= 0.1f;
+
+        if(text.characterSpacing < originalFontSpacing)
+            text.characterSpacing = originalFontSpacing;
         }
+    }
+
+    // check for mouse hover
+    private void OnMouseOver()
+    {
+        if(text.characterSpacing < originalFontSpacing + 5f)
+            text.characterSpacing += 0.05f;
+    }
+
+    // check for mouse exit
+    private void OnMouseExit()
+    {
+        while(text.characterSpacing > originalFontSpacing)
+            text.characterSpacing -= 0.1f;
+
+        if(text.characterSpacing < originalFontSpacing)
+            text.characterSpacing = originalFontSpacing;
     }
 
     // Coroutine to check the overlap duration

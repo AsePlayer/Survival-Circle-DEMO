@@ -20,7 +20,11 @@ public class BackButton : MonoBehaviour
     public bool isOverlapComplete = false; // Variable to track if overlap check is already completed
     public bool stoppedOverlapping = true; // Variable to track if player has stopped overlapping
 
-    
+    public TMPro.TextMeshProUGUI text;
+
+    // cache original font spacing
+    private float originalFontSpacing;
+
     // ════════════════════════════
     //      Start and Update
     // ════════════════════════════
@@ -33,6 +37,9 @@ public class BackButton : MonoBehaviour
         if(player) player = gameController.GetPlayer();
 
         land = gameController.land;
+
+        // cache original font spacing
+        originalFontSpacing = text.characterSpacing;
     }
 
     // Update is called once per frame
@@ -62,7 +69,7 @@ public class BackButton : MonoBehaviour
         }
 
         // If player is alive, the back button will go back
-        if (IsOverlapComplete() && player.IsAlive())
+        if (IsOverlapComplete() && player.IsAlive() && MenuManager.Instance.menuState != MenuManager.MenuState.Game)
         {
             // Change MenuManager State
             MenuManager.Instance.UpdateMenuState(MenuManager.MenuState.Back);
@@ -134,31 +141,57 @@ public class BackButton : MonoBehaviour
     }
 
 
-    private void OnTriggerStay2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Player"))
+        private void OnTriggerStay2D(Collider2D other)
         {
-            stoppedOverlapping = false; // Set overlap check completion flag to false
+            if (other.gameObject.CompareTag("Player"))
+            {
+                if(text.characterSpacing < originalFontSpacing + 5f)
+                    text.characterSpacing += 0.1f;
 
-            // Check if the player is null
-            if (player == null)
-            {
-                player = gameController.GetPlayer();
-            }
-            else if (!isOverlapComplete) // Check if overlap check is not already completed
-            {
-                StartCoroutine(CheckOverlapDuration());
+                stoppedOverlapping = false; // Set overlap check completion flag to false
+
+                // Check if the player is null
+                if (player == null)
+                {
+                    player = gameController.GetPlayer();
+                }
+                else if (!isOverlapComplete) // Check if overlap check is not already completed
+                {
+                    StartCoroutine(CheckOverlapDuration());
+                }
             }
         }
-    }
 
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject.CompareTag("Player"))
+        private void OnTriggerExit2D(Collider2D other)
         {
-            stoppedOverlapping = true; // Set overlap check completion flag to true
+            if (other.gameObject.CompareTag("Player"))
+            {
+                stoppedOverlapping = true; // Set overlap check completion flag to true
+
+            while(text.characterSpacing > originalFontSpacing)
+                text.characterSpacing -= 0.1f;
+
+            if(text.characterSpacing < originalFontSpacing)
+                text.characterSpacing = originalFontSpacing;
+            }
         }
-    }
+
+        // check for mouse hover
+        private void OnMouseOver()
+        {
+            if(text.characterSpacing < originalFontSpacing + 5f)
+                text.characterSpacing += 0.05f;
+        }
+
+        // check for mouse exit
+        private void OnMouseExit()
+        {
+            while(text.characterSpacing > originalFontSpacing)
+                text.characterSpacing -= 0.1f;
+
+            if(text.characterSpacing < originalFontSpacing)
+                text.characterSpacing = originalFontSpacing;
+        }
 
     // Coroutine to check the overlap duration
     private IEnumerator CheckOverlapDuration()

@@ -19,6 +19,8 @@ public class Rectangle : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if(gameObject.tag != "CharacterSelect") return;
+
         PlayerInfo.playerInfo.SetShape("Rectangle");
         Destroy(PlayerInfo.playerInfo.GetPlayer().gameObject);
     }
